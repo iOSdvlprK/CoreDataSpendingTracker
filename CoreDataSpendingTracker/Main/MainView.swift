@@ -22,14 +22,9 @@ struct MainView: View {
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                 .frame(height: 300)
                 .indexViewStyle(.page(backgroundDisplayMode: .always))
-                // hack
-//                .onAppear {
-//                    shouldPresentAddCardForm.toggle()
-//                }
                 
                 Spacer()
                     .fullScreenCover(isPresented: $shouldPresentAddCardForm, onDismiss: nil) {
-//                        AddCardForm(shouldPresentAddCardForm: $shouldPresentAddCardForm)
                         AddCardForm()
                     }
             }
