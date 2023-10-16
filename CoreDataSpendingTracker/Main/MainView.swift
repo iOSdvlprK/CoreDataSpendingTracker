@@ -30,6 +30,8 @@ struct MainView: View {
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 300)
                     .indexViewStyle(.page(backgroundDisplayMode: .always))
+                } else {
+                    emptyPromptMessage
                 }
                 
                 Spacer()
@@ -50,6 +52,26 @@ struct MainView: View {
                 }
             }
         }
+    }
+    
+    private var emptyPromptMessage: some View {
+        VStack {
+            Text("You currently have no cards in the system.")
+                .padding(.horizontal, 70)
+                .padding(.vertical)
+                .multilineTextAlignment(.center)
+            
+            Button(action: {
+                shouldPresentAddCardForm.toggle()
+            }, label: {
+                Text("+ Add Your First Card")
+                    .foregroundColor(Color(.systemBackground))
+            })
+            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+            .background(Color(.label))
+            .cornerRadius(5)
+        }
+        .font(.system(size: 22, weight: .semibold))
     }
     
     private var deleteAllButton: some View {
@@ -90,10 +112,49 @@ struct MainView: View {
     struct CreditCardView: View {
         let card: Card
         
+        @State private var shouldShowActionSheet = false
+        
+        private func handleDelete() {
+            let viewContext = PersistenceController.shared.container.viewContext
+            
+            viewContext.delete(card)
+            
+            do {
+                try viewContext.save()
+            } catch {
+                // error handling
+            }
+        }
+        
         var body: some View {
             VStack(alignment: .leading, spacing: 22) {
-                Text(card.name ?? "")
-                    .font(.system(size: 25, weight: .semibold))
+                HStack {
+                    Text(card.name ?? "")
+                        .font(.system(size: 25, weight: .semibold))
+                    Spacer()
+                    Button(action: {
+                        shouldShowActionSheet.toggle()
+                    }, label: {
+                        Image(systemName: "ellipsis")
+                            .font(.system(size: 28, weight: .bold))
+                    })
+//                    .actionSheet(isPresented: <#T##Binding<Bool>#>, content: <#T##() -> ActionSheet#>)
+                    .confirmationDialog(
+                        Text(self.card.name ?? ""),
+                        isPresented:
+                            $shouldShowActionSheet,
+                        titleVisibility: .visible,
+                        actions: {
+                            Button(role: .destructive, action: {
+                                handleDelete()
+                            }, label: {
+                                Text("Delete Card")
+                            })
+                        }, message: {
+                            Text("Options")
+                        }
+                    )
+                }
                 
                 HStack {
                     Image("visa")
