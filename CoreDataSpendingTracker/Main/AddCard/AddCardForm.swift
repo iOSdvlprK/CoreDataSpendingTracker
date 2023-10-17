@@ -8,6 +8,28 @@
 import SwiftUI
 
 struct AddCardForm: View {
+    let card: Card?
+    
+    init(card: Card? = nil) {
+        self.card = card
+        
+        _name = State(initialValue: card?.name ?? "")
+        _cardNumber = State(initialValue: card?.number ?? "")
+        
+        if let limit = card?.limit {
+            _limit = State(initialValue: String(limit))
+        }
+        
+        _cardType = State(initialValue: card?.type ?? "")
+        _month = State(initialValue: Int(card?.expMonth ?? 1))
+        _year = State(initialValue: Int(card?.expYear ?? Int16(Int(currentYear))))
+        
+        if let data = card?.color, let uiColor = UIColor.color(data: data) {
+            let c = Color(uiColor)
+            _color = State(initialValue: c)
+        }
+    }
+    
     @Environment(\.dismiss) var dismiss
     
     @State private var name = ""
@@ -60,7 +82,7 @@ struct AddCardForm: View {
                     ColorPicker("Color", selection: $color)
                 }, header: { Text("Color") })
             }
-            .navigationTitle("Add Credit Card")
+            .navigationTitle(self.card != nil ? self.card?.name ?? "" : "Add Credit Card")
             .toolbar {
                 ToolbarItem(placement: .navigationBarLeading) {
                     cancelButton
@@ -75,7 +97,8 @@ struct AddCardForm: View {
     private var saveButton: some View {
         Button(action: {
             let viewContext = PersistenceController.shared.container.viewContext
-            let card = Card(context: viewContext)
+//            let card = Card(context: viewContext)
+            let card = self.card != nil ? self.card! : Card(context: viewContext)
             
             card.name = self.name
             card.number = self.cardNumber
@@ -84,6 +107,7 @@ struct AddCardForm: View {
             card.expYear = Int16(self.year)
             card.timestamp = Date()
             card.color = UIColor(self.color).encode()
+            card.type = cardType
             
             do {
                 try viewContext.save()
