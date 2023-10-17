@@ -9,6 +9,7 @@ import SwiftUI
 
 struct MainView: View {
     @State private var shouldPresentAddCardForm = false
+    @State private var shouldShowAddTransactionForm = false
     
     @Environment(\.managedObjectContext) private var viewContext
 
@@ -29,7 +30,23 @@ struct MainView: View {
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 300)
-                    .indexViewStyle(.page(backgroundDisplayMode: .always))
+                    .indexViewStyle(PageIndexViewStyle.page(backgroundDisplayMode: .always))
+                    
+                    Text("Get started by adding your first transaction")
+                    
+                    Button {
+                        shouldShowAddTransactionForm.toggle()
+                    } label: {
+                        Text("+ Transaction")
+                            .padding(EdgeInsets(top: 10, leading: 14, bottom: 10, trailing: 14))
+                            .background(Color(.label))
+                            .foregroundColor(Color(.systemBackground))
+                            .font(.headline)
+                            .cornerRadius(5)
+                    }
+                    .fullScreenCover(isPresented: $shouldShowAddTransactionForm) {
+                        AddTransactionForm()
+                    }
                 } else {
                     emptyPromptMessage
                 }
@@ -41,12 +58,6 @@ struct MainView: View {
             }
             .navigationTitle("Credit Cards")
             .toolbar {
-                ToolbarItem(placement: .navigationBarLeading) {
-                    HStack {
-                        addItemButton
-                        deleteAllButton
-                    }
-                }
                 ToolbarItem(placement: .navigationBarTrailing) {
                     addCardButton
                 }
@@ -72,40 +83,6 @@ struct MainView: View {
             .cornerRadius(5)
         }
         .font(.system(size: 22, weight: .semibold))
-    }
-    
-    private var deleteAllButton: some View {
-        Button(action: {
-            cards.forEach { card in
-                viewContext.delete(card)
-            }
-            
-            do {
-                try viewContext.save()
-            } catch {
-                
-            }
-        }, label: {
-            Text("Delete All")
-        })
-    }
-    
-    var addItemButton: some View {
-        Button(action: {
-            withAnimation {
-                let card = Card(context: viewContext)
-                card.timestamp = Date()
-
-                do {
-                    try viewContext.save()
-                } catch {
-//                    let nsError = error as NSError
-//                    fatalError("Unresolved error \(nsError), \(nsError.userInfo)")
-                }
-            }
-        }, label: {
-            Text("Add Item")
-        })
     }
     
     struct CreditCardView: View {

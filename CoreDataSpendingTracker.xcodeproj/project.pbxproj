@@ -14,6 +14,7 @@
 		D87EE8C62AD680B400FE1F1B /* Persistence.swift in Sources */ = {isa = PBXBuildFile; fileRef = D87EE8C52AD680B400FE1F1B /* Persistence.swift */; };
 		D87EE8C92AD680B400FE1F1B /* CoreDataSpendingTracker.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = D87EE8C72AD680B400FE1F1B /* CoreDataSpendingTracker.xcdatamodeld */; };
 		D88AC7322AD9815F00C4E2A7 /* AddCardForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D88AC7312AD9815F00C4E2A7 /* AddCardForm.swift */; };
+		D8A155232ADECCE10088BF06 /* AddTransactionForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */; };
 		D8F02DD32AD8208B00AA447D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F02DD22AD8208B00AA447D /* MainView.swift */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 		D87EE8C52AD680B400FE1F1B /* Persistence.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Persistence.swift; sourceTree = "<group>"; };
 		D87EE8C82AD680B400FE1F1B /* CoreDataSpendingTracker.xcdatamodel */ = {isa = PBXFileReference; lastKnownFileType = wrapper.xcdatamodel; path = CoreDataSpendingTracker.xcdatamodel; sourceTree = "<group>"; };
 		D88AC7312AD9815F00C4E2A7 /* AddCardForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCardForm.swift; sourceTree = "<group>"; };
+		D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionForm.swift; sourceTree = "<group>"; };
 		D8F02DD22AD8208B00AA447D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -86,9 +88,18 @@
 			path = AddCard;
 			sourceTree = "<group>";
 		};
+		D8A155212ADECCC90088BF06 /* Transaction */ = {
+			isa = PBXGroup;
+			children = (
+				D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */,
+			);
+			path = Transaction;
+			sourceTree = "<group>";
+		};
 		D8F02DD12AD8207E00AA447D /* Main */ = {
 			isa = PBXGroup;
 			children = (
+				D8A155212ADECCC90088BF06 /* Transaction */,
 				D88AC7302AD9813000C4E2A7 /* AddCard */,
 				D8F02DD22AD8208B00AA447D /* MainView.swift */,
 			);
@@ -168,6 +179,7 @@
 				D87EE8C62AD680B400FE1F1B /* Persistence.swift in Sources */,
 				D88AC7322AD9815F00C4E2A7 /* AddCardForm.swift in Sources */,
 				D87EE8BF2AD680B200FE1F1B /* ContentView.swift in Sources */,
+				D8A155232ADECCE10088BF06 /* AddTransactionForm.swift in Sources */,
 				D87EE8BD2AD680B200FE1F1B /* CoreDataSpendingTrackerApp.swift in Sources */,
 				D8F02DD32AD8208B00AA447D /* MainView.swift in Sources */,
 				D87EE8C92AD680B400FE1F1B /* CoreDataSpendingTracker.xcdatamodeld in Sources */,
