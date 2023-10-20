@@ -17,32 +17,42 @@ struct MainView: View {
         animation: .default)
     private var cards: FetchedResults<Card>
     
-    @State private var cardSelectionIndex = 0
+//    @State private var cardSelectionIndex = 0
+    @State private var selectedCardHash = 0
     
     var body: some View {
         NavigationStack {
             ScrollView {
                 if !cards.isEmpty {
-//                    TabView {
-//                        ForEach(cards) { card in
-//                            CreditCardView(card: card)
+//                    TabView(selection: $cardSelectionIndex) {
+//                        ForEach(0..<cards.count, id: \.self) { i in
+//                            CreditCardView(card: cards[i])
 //                                .padding(.bottom, 50)
+//                                .tag(i)
 //                        }
 //                    }
-                    TabView(selection: $cardSelectionIndex) {
-                        ForEach(0..<cards.count, id: \.self) { i in
-                            CreditCardView(card: cards[i])
+                    TabView(selection: $selectedCardHash) {
+                        ForEach(cards) { card in
+                            CreditCardView(card: card)
                                 .padding(.bottom, 50)
-                                .tag(i)
+                                .tag(card.hash)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 300)
                     .indexViewStyle(PageIndexViewStyle.page(backgroundDisplayMode: .always))
+                    .onAppear {
+                        self.selectedCardHash = cards.first?.hash ?? 0
+                    }
                     
-                    if let selectedCard = cards[cardSelectionIndex] {
-                        Text(selectedCard.name ?? "")
-                        TransactionsListView(card: selectedCard)
+//                    if let selectedCard = cards[cardSelectionIndex] {
+//                        Text(selectedCard.name ?? "")
+//                        TransactionsListView(card: selectedCard)
+//                    }
+                    if let firstIndex = cards.firstIndex(where: { $0.hash == selectedCardHash }) {
+                        let card = self.cards[firstIndex]
+//                        Text(card.name ?? "")
+                        TransactionsListView(card: card)
                     }
                     
                 } else {
@@ -51,7 +61,10 @@ struct MainView: View {
                 
                 Spacer()
                     .fullScreenCover(isPresented: $shouldPresentAddCardForm, onDismiss: nil) {
-                        AddCardForm()
+//                        AddCardForm()
+                        AddCardForm(card: nil) { card in
+                            self.selectedCardHash = card.hash
+                        }
                     }
             }
             .navigationTitle("Credit Cards")
