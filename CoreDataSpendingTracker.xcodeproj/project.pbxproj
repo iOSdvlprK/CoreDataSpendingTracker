@@ -17,6 +17,7 @@
 		D8A155232ADECCE10088BF06 /* AddTransactionForm.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */; };
 		D8D962A82AE150B0000FE112 /* TransactionsListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8D962A72AE150B0000FE112 /* TransactionsListView.swift */; };
 		D8F02DD32AD8208B00AA447D /* MainView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8F02DD22AD8208B00AA447D /* MainView.swift */; };
+		D8FBA3722AE2CED500DC7FD5 /* CategoriesListView.swift in Sources */ = {isa = PBXBuildFile; fileRef = D8FBA3712AE2CED500DC7FD5 /* CategoriesListView.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -31,6 +32,7 @@
 		D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddTransactionForm.swift; sourceTree = "<group>"; };
 		D8D962A72AE150B0000FE112 /* TransactionsListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TransactionsListView.swift; sourceTree = "<group>"; };
 		D8F02DD22AD8208B00AA447D /* MainView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainView.swift; sourceTree = "<group>"; };
+		D8FBA3712AE2CED500DC7FD5 /* CategoriesListView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoriesListView.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -95,6 +97,7 @@
 			children = (
 				D8A155222ADECCE10088BF06 /* AddTransactionForm.swift */,
 				D8D962A72AE150B0000FE112 /* TransactionsListView.swift */,
+				D8FBA3712AE2CED500DC7FD5 /* CategoriesListView.swift */,
 			);
 			path = Transaction;
 			sourceTree = "<group>";
@@ -184,6 +187,7 @@
 				D87EE8BF2AD680B200FE1F1B /* ContentView.swift in Sources */,
 				D8A155232ADECCE10088BF06 /* AddTransactionForm.swift in Sources */,
 				D87EE8BD2AD680B200FE1F1B /* CoreDataSpendingTrackerApp.swift in Sources */,
+				D8FBA3722AE2CED500DC7FD5 /* CategoriesListView.swift in Sources */,
 				D8D962A82AE150B0000FE112 /* TransactionsListView.swift in Sources */,
 				D8F02DD32AD8208B00AA447D /* MainView.swift in Sources */,
 				D87EE8C92AD680B400FE1F1B /* CoreDataSpendingTracker.xcdatamodeld in Sources */,
