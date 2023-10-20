@@ -17,21 +17,33 @@ struct MainView: View {
         animation: .default)
     private var cards: FetchedResults<Card>
     
+    @State private var cardSelectionIndex = 0
+    
     var body: some View {
         NavigationStack {
             ScrollView {
                 if !cards.isEmpty {
-                    TabView {
-                        ForEach(cards) { card in
-                            CreditCardView(card: card)
+//                    TabView {
+//                        ForEach(cards) { card in
+//                            CreditCardView(card: card)
+//                                .padding(.bottom, 50)
+//                        }
+//                    }
+                    TabView(selection: $cardSelectionIndex) {
+                        ForEach(0..<cards.count, id: \.self) { i in
+                            CreditCardView(card: cards[i])
                                 .padding(.bottom, 50)
+                                .tag(i)
                         }
                     }
                     .tabViewStyle(PageTabViewStyle(indexDisplayMode: .always))
                     .frame(height: 300)
                     .indexViewStyle(PageIndexViewStyle.page(backgroundDisplayMode: .always))
                     
-                    TransactionsListView()
+                    if let selectedCard = cards[cardSelectionIndex] {
+                        Text(selectedCard.name ?? "")
+                        TransactionsListView(card: selectedCard)
+                    }
                     
                 } else {
                     emptyPromptMessage
