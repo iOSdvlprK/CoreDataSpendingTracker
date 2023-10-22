@@ -267,7 +267,8 @@ struct CardTransactionView: View {
         }
         .foregroundColor(Color(.label))
         .padding()
-        .background(Color.white)
+//        .background(colorScheme == .dark ? Color.gray : .white)
+        .background(Color.cardTransactionBackground)
         .cornerRadius(5)
         .shadow(radius: 5)
         .padding()
@@ -285,6 +286,8 @@ struct CardTransactionView: View {
             }
         }
     }
+    
+    @Environment(\.colorScheme) var colorScheme
 }
 
 struct TransactionsListView_Previews: PreviewProvider {
@@ -306,5 +309,6 @@ struct TransactionsListView_Previews: PreviewProvider {
             }
         }
         .environment(\.managedObjectContext, context)
+        .preferredColorScheme(.light)
     }
 }
