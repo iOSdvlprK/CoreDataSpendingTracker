@@ -96,129 +96,6 @@ struct MainView: View {
         .font(.system(size: 22, weight: .semibold))
     }
     
-    struct CreditCardView: View {
-        let card: Card
-        
-        init(card: Card) {
-            self.card = card
-            
-            // look at all the transactions for the card
-            fetchRequest = FetchRequest<CardTransaction>(entity: CardTransaction.entity(), sortDescriptors: [
-                NSSortDescriptor(key: "timestamp", ascending: false)
-            ], predicate: NSPredicate(format: "card == %@", self.card))
-        }
-        
-        @Environment(\.managedObjectContext) private var viewContext
-        
-        var fetchRequest: FetchRequest<CardTransaction>
-        
-        @State private var shouldShowActionSheet = false
-        @State private var shouldShowEditForm = false
-        
-        @State private var refreshId = UUID()
-        
-        private func handleDelete() {
-            let viewContext = PersistenceController.shared.container.viewContext
-            
-            viewContext.delete(card)
-            
-            do {
-                try viewContext.save()
-            } catch {
-                // error handling
-            }
-        }
-        
-        var body: some View {
-            VStack(alignment: .leading, spacing: 22) {
-                HStack {
-                    Text(card.name ?? "")
-                        .font(.system(size: 25, weight: .semibold))
-                    Spacer()
-                    Button(action: {
-                        shouldShowActionSheet.toggle()
-                    }, label: {
-                        Image(systemName: "ellipsis")
-                            .font(.system(size: 28, weight: .bold))
-                    })
-                    .confirmationDialog(
-                        Text(self.card.name ?? ""),
-                        isPresented:
-                            $shouldShowActionSheet,
-                        titleVisibility: .visible,
-                        actions: {
-                            Button(action: {
-                                shouldShowEditForm.toggle()
-                            }, label: {
-                                Text("Edit")
-                            })
-                            Button(role: .destructive, action: {
-                                handleDelete()
-                            }, label: {
-                                Text("Delete Card")
-                            })
-                        }, message: {
-                            Text("Options")
-                        }
-                    )
-                }
-                
-                HStack {
-                    let imageName = card.type?.lowercased() ?? ""
-                    Image(imageName)
-                        .resizable()
-                        .scaledToFit()
-                        .frame(height: 44)
-                        .clipped()
-                    Spacer()
-                    
-                    if let balance = fetchRequest.wrappedValue.reduce(0, { $0 + $1.amount }) {
-                        Text("Balance: $\(String(format: "%.2f", balance))")
-                            .font(.system(size: 19, weight: .semibold))
-                    }
-                }
-                
-                Text(card.number ?? "")
-                
-                HStack {
-                    Text("Credit Limit: $\(card.limit)")
-                    Spacer()
-                    VStack(alignment: .trailing) {
-                        Text("Valid Thru")
-                        Text("\(String(format: "%02d", card.expMonth))/\(String(card.expYear % 2000))")
-                    }
-                }
-            }
-            .foregroundColor(.white)
-            .padding()
-            .background(
-                VStack {
-                    if let colorData = card.color,
-                       let uiColor = UIColor.color(data: colorData),
-                       let actualColor = Color(uiColor) {
-                        LinearGradient(colors: [
-                            actualColor.opacity(0.6),
-                            actualColor
-                        ], startPoint: .center, endPoint: .bottom)
-                    } else {
-                        Color.cyan
-                    }
-                }
-            )
-            .overlay(RoundedRectangle(cornerRadius: 8)
-                .stroke(Color.black.opacity(0.5), lineWidth: 1)
-            )
-            .cornerRadius(8)
-            .shadow(radius: 5)
-            .padding(.horizontal)
-            .padding(.top, 8)
-            
-            .fullScreenCover(isPresented: $shouldShowEditForm) {
-                AddCardForm(card: self.card)
-            }
-        }
-    }
-    
     var addCardButton: some View {
         Button(action: {
             shouldPresentAddCardForm.toggle()
@@ -230,6 +107,129 @@ struct MainView: View {
                 .background(Color.black)
                 .cornerRadius(5)
         })
+    }
+}
+
+struct CreditCardView: View {
+    let card: Card
+    
+    init(card: Card) {
+        self.card = card
+        
+        // look at all the transactions for the card
+        fetchRequest = FetchRequest<CardTransaction>(entity: CardTransaction.entity(), sortDescriptors: [
+            NSSortDescriptor(key: "timestamp", ascending: false)
+        ], predicate: NSPredicate(format: "card == %@", self.card))
+    }
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var fetchRequest: FetchRequest<CardTransaction>
+    
+    @State private var shouldShowActionSheet = false
+    @State private var shouldShowEditForm = false
+    
+    @State private var refreshId = UUID()
+    
+    private func handleDelete() {
+        let viewContext = PersistenceController.shared.container.viewContext
+        
+        viewContext.delete(card)
+        
+        do {
+            try viewContext.save()
+        } catch {
+            // error handling
+        }
+    }
+    
+    var body: some View {
+        VStack(alignment: .leading, spacing: 22) {
+            HStack {
+                Text(card.name ?? "")
+                    .font(.system(size: 25, weight: .semibold))
+                Spacer()
+                Button(action: {
+                    shouldShowActionSheet.toggle()
+                }, label: {
+                    Image(systemName: "ellipsis")
+                        .font(.system(size: 28, weight: .bold))
+                })
+                .confirmationDialog(
+                    Text(self.card.name ?? ""),
+                    isPresented:
+                        $shouldShowActionSheet,
+                    titleVisibility: .visible,
+                    actions: {
+                        Button(action: {
+                            shouldShowEditForm.toggle()
+                        }, label: {
+                            Text("Edit")
+                        })
+                        Button(role: .destructive, action: {
+                            handleDelete()
+                        }, label: {
+                            Text("Delete Card")
+                        })
+                    }, message: {
+                        Text("Options")
+                    }
+                )
+            }
+            
+            HStack {
+                let imageName = card.type?.lowercased() ?? ""
+                Image(imageName)
+                    .resizable()
+                    .scaledToFit()
+                    .frame(height: 44)
+                    .clipped()
+                Spacer()
+                
+                if let balance = fetchRequest.wrappedValue.reduce(0, { $0 + $1.amount }) {
+                    Text("Balance: $\(String(format: "%.2f", balance))")
+                        .font(.system(size: 19, weight: .semibold))
+                }
+            }
+            
+            Text(card.number ?? "")
+            
+            HStack {
+                Text("Credit Limit: $\(card.limit)")
+                Spacer()
+                VStack(alignment: .trailing) {
+                    Text("Valid Thru")
+                    Text("\(String(format: "%02d", card.expMonth))/\(String(card.expYear % 2000))")
+                }
+            }
+        }
+        .foregroundColor(.white)
+        .padding()
+        .background(
+            VStack {
+                if let colorData = card.color,
+                   let uiColor = UIColor.color(data: colorData),
+                   let actualColor = Color(uiColor) {
+                    LinearGradient(colors: [
+                        actualColor.opacity(0.6),
+                        actualColor
+                    ], startPoint: .center, endPoint: .bottom)
+                } else {
+                    Color.cyan
+                }
+            }
+        )
+        .overlay(RoundedRectangle(cornerRadius: 8)
+            .stroke(Color.black.opacity(0.5), lineWidth: 1)
+        )
+        .cornerRadius(8)
+        .shadow(radius: 5)
+        .padding(.horizontal)
+        .padding(.top, 8)
+        
+        .fullScreenCover(isPresented: $shouldShowEditForm) {
+            AddCardForm(card: self.card)
+        }
     }
 }
 

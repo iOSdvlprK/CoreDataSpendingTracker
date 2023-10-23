@@ -14,7 +14,8 @@ struct CoreDataSpendingTrackerApp: App {
     var body: some Scene {
         WindowGroup {
 //            ContentView()
-            MainView()
+//            MainView()
+            DeviceIdiomView()
                 .environment(\.managedObjectContext, persistenceController.container.viewContext)
         }
     }
