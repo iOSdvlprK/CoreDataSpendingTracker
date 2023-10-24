@@ -17,6 +17,8 @@ struct MainPadDeviceView: View {
         animation: .default)
     private var cards: FetchedResults<Card>
     
+    @State private var selectedCard: Card?
+    
     var body: some View {
         NavigationStack {
             ScrollView {
@@ -25,11 +27,24 @@ struct MainPadDeviceView: View {
                         ForEach(cards) { card in
                             CreditCardView(card: card)
                                 .frame(width: 370)
+                                .onTapGesture {
+                                    withAnimation {
+                                        self.selectedCard = card
+                                    }
+                                }
+                                .scaleEffect(self.selectedCard == card ? 1.1 : 1)
                         }
                     }
+                    .frame(height: 270)
+                    .onAppear {
+                        self.selectedCard = cards.first
+                    }
+                    .padding(.leading)
                 }
                 
-                TransactionGrid()
+                if let card = self.selectedCard {
+                    TransactionsGrid(card: card)
+                }
             }
             .navigationTitle("Money Tracker")
             .toolbar {
@@ -52,17 +67,36 @@ struct MainPadDeviceView: View {
     }
 }
 
-struct TransactionGrid: View {
+struct TransactionsGrid: View {
+    let card: Card
+    
+    init(card: Card) {
+        self.card = card
+        
+        fetchRequest = FetchRequest<CardTransaction>(entity: CardTransaction.entity(), sortDescriptors: [
+            NSSortDescriptor(key: "timestamp", ascending: false)
+        ], predicate: NSPredicate(format: "card == %@", self.card))
+    }
+    
+    @Environment(\.managedObjectContext) private var viewContext
+    
+    var fetchRequest: FetchRequest<CardTransaction>
+    
+    @State private var shouldShowAddTransactionForm = false
+    
     var body: some View {
         VStack {
             HStack {
                 Text("Transactions")
                 Spacer()
                 Button {
-                    
+                    shouldShowAddTransactionForm.toggle()
                 } label: {
                     Text("+ Transaction")
                 }
+            }
+            .sheet(isPresented: $shouldShowAddTransactionForm) {
+                AddTransactionForm(card: card)
             }
             
             let columns = [
@@ -92,10 +126,42 @@ struct TransactionGrid: View {
 //                .background(Color.blue)
             }
             .foregroundColor(Color(.darkGray))
+            
+            LazyVGrid(columns: columns) {
+                ForEach(fetchRequest.wrappedValue) { transaction in
+                    Group {
+                        if let date = transaction.timestamp {
+                            Text(dateFormatter.string(from: date))
+                        }
+                        if let data = transaction.photoData, let uiImage = UIImage(data: data) {
+                            Image(uiImage: uiImage)
+                                .resizable()
+                                .scaledToFit()
+                                .frame(height: 100)
+                                .cornerRadius(8)
+                        } else {
+                            Text("No photo available")
+                        }
+                        HStack {
+                            Text(transaction.name ?? "")
+                            Spacer()
+                        }
+                        Text(String(format: "%.2f", transaction.amount))
+                    }
+                    .multilineTextAlignment(.leading)
+                }
+            }
         }
-        .font(.system(size: 24, weight: .semibold))
+        .font(.system(size: 22, weight: .semibold))
         .padding()
     }
+    
+    private let dateFormatter: DateFormatter = {
+        let formatter = DateFormatter()
+        formatter.dateStyle = .short
+        formatter.timeStyle = .none
+        return formatter
+    }()
 }
 
 struct MainPadDeviceView_Previews: PreviewProvider {
