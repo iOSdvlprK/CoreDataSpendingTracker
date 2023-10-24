@@ -63,6 +63,11 @@ struct MainPadDeviceView: View {
             shouldShowAddCardForm.toggle()
         } label: {
             Text("+ Card")
+                .padding(.vertical, 6).padding(.horizontal, 10)
+                .foregroundColor(Color(.systemBackground))
+                .font(.system(size: 20, weight: .semibold))
+                .background(Color(.label))
+                .cornerRadius(5)
         }
     }
 }
@@ -93,6 +98,11 @@ struct TransactionsGrid: View {
                     shouldShowAddTransactionForm.toggle()
                 } label: {
                     Text("+ Transaction")
+                        .padding(.vertical, 6).padding(.horizontal, 10)
+                        .foregroundColor(Color(.systemBackground))
+                        .font(.system(size: 20, weight: .semibold))
+                        .background(Color(.label))
+                        .cornerRadius(5)
                 }
             }
             .sheet(isPresented: $shouldShowAddTransactionForm) {
@@ -127,28 +137,37 @@ struct TransactionsGrid: View {
             }
             .foregroundColor(Color(.darkGray))
             
-            LazyVGrid(columns: columns) {
+            LazyVStack(spacing: 0) {
                 ForEach(fetchRequest.wrappedValue) { transaction in
-                    Group {
-                        if let date = transaction.timestamp {
-                            Text(dateFormatter.string(from: date))
+                    VStack(spacing: 0) {
+                        Divider()
+                        if let index = fetchRequest.wrappedValue.firstIndex(of: transaction) {
+                            LazyVGrid(columns: columns) {
+                                Group {
+                                    if let date = transaction.timestamp {
+                                        Text(dateFormatter.string(from: date))
+                                    }
+                                    if let data = transaction.photoData, let uiImage = UIImage(data: data) {
+                                        Image(uiImage: uiImage)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(height: 100)
+                                            .cornerRadius(8)
+                                    } else {
+                                        Text("No photo available")
+                                    }
+                                    HStack {
+                                        Text(transaction.name ?? "")
+                                        Spacer()
+                                    }
+                                    Text(String(format: "%.2f", transaction.amount))
+                                }
+                                .multilineTextAlignment(.leading)
+                            }
+                            .padding(.vertical)
+                            .background(index % 2 == 0 ? Color(.systemBackground) : Color(.init(white: 0, alpha: 0.03)))
                         }
-                        if let data = transaction.photoData, let uiImage = UIImage(data: data) {
-                            Image(uiImage: uiImage)
-                                .resizable()
-                                .scaledToFit()
-                                .frame(height: 100)
-                                .cornerRadius(8)
-                        } else {
-                            Text("No photo available")
-                        }
-                        HStack {
-                            Text(transaction.name ?? "")
-                            Spacer()
-                        }
-                        Text(String(format: "%.2f", transaction.amount))
                     }
-                    .multilineTextAlignment(.leading)
                 }
             }
         }
